@@ -26,6 +26,7 @@ void multigrid(const char *, const char * );
 typedef struct{
 	int id;
 	int node[3];
+	double operator[3][3];
 } Element;
 
 typedef struct{

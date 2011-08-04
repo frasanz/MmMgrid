@@ -73,9 +73,9 @@ void scan_vertex(Vertex * vertex, const char * file_name)
 		print_debug(0,"\t[ERROR] The file %s doesn't exists, exiting...\n", file_name);
 		exit(FILE_NOT_EXISTS);
 	}
-	while(fscanf(f,"%d %lf %lf",&vertex[i].id,&vertex[i].c[1], &vertex[i].c[2])!=EOF){
+	while(fscanf(f,"%d %lf %lf",&vertex[i].id,&vertex[i].c[0], &vertex[i].c[1])!=EOF){
 		if(debug>3)
-			printf("\t[DEBUG] Vertex %d: %f %f\n",vertex[i].id, vertex[i].c[1], vertex[i].c[2]);
+			printf("\t[DEBUG] Vertex %d: %f %f\n",vertex[i].id, vertex[i].c[0], vertex[i].c[1]);
 		i++;
 	}
 }

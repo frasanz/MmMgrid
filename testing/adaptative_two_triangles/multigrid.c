@@ -21,11 +21,13 @@
 #include "io.h"
 #include "multigrid.h"
 #include "error_number.h"
+#include "operator.h"
 extern int debug;
 
 void multigrid(const char * element_file_name, const char * vertex_file_name)
 {
 	print_debug(3,"\t[WHERE] In function multigrid\n","");
+	int i;
 
 	/* Definitions */
 	Element * element;
@@ -58,6 +60,10 @@ void multigrid(const char * element_file_name, const char * vertex_file_name)
 
 	/* Scan vertex */
 	scan_vertex(vertex, vertex_file_name);
+
+	/* Build operator for each element */
+	for(i=0;i<number_elements;i++)
+		build_operator(i,element,vertex);
 
 }
 
