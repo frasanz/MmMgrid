@@ -16,34 +16,14 @@
  * =====================================================================================
  */
 
-#ifndef __MULTIGRID_H_
-#define __MULTIGRID_H_
+#ifndef __MULTIGRID_KERNEL_H_
+#define __MULTIGRID_KERNEL_H_
+
+#include "multigrid.h"
+
 
 /* Functions */
-void multigrid(const char *, const char * , int, int , int);
-
-/* Structures */
-
-typedef struct{
-	double * u;
-	double * v;
-	double * d;
-	double * f;
-} Mesh;
-
-typedef struct{
-	int id;
-	int node[3];
-	int n_levels;
-	double operator[3][3];
-	Mesh * mesh;
-	double max_error;
-} Element;
-
-typedef struct{
-	int id;
-	double c[2];
-} Vertex;
+void multigrid_kernel(Element * element);
 
 #endif /* __MULTIGRID_H_ */
 
