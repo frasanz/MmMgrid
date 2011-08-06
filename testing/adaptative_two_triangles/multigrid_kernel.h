@@ -23,7 +23,14 @@
 
 
 /* Functions */
-void multigrid_kernel(Element * element);
+void multigrid_kernel(Element * element,
+											int levels,            // Default number of levels
+											int ele,							 // Special element
+											int lev,							 // Number of levels of the special element
+											char * mode,           // v,w or f
+											int * smooth_levels,
+											int next_level         // The next level
+											);
 
 #endif /* __MULTIGRID_H_ */
 

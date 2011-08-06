@@ -33,6 +33,9 @@ int main(int argc, char ** argv)
 	int levels = 5;																	// Default number of levels
 	int element=-1;                                 // Special element
 	int level=-1;                                   // number of levels of the special element
+	char mode[1];                                   // The default multigrid mode
+	int iterations=5;				   											// The default number of iterations
+	int smooth_levels[2];														// Default smooth levels
 
 	/* Variables de uso */
 	const char *uso="Use: %s [Options]\n "
@@ -41,9 +44,17 @@ int main(int argc, char ** argv)
 	 " -vx vertex_file_name       file where is defined the vertexs\n"
 	 " -levels n                  default number of levels\n"
 	 " -element m n               the element m has n levels\n"
-	 " -d int                     level of debug\n\n";
+	 " -mode f|v|w                multigrid mode, default v\n"
+	 " -iter n                    the number of iterations\n"
+	 " -sl n m                    smooth levels, default 1 1 \n"
+	 " -d int                     level of debug\n"
+	 " -h | --help                show this help\n\n";
 
 
+
+
+	/* Default arguments */
+	sprintf(mode,"%s","v");
 	/* Parse of arguments */
 	if((argc>1) && (!strcmp(argv[1],"-h") || !strcmp(argv[1], "--help"))) {
 		printf (uso, argv[0]);
@@ -62,9 +73,19 @@ int main(int argc, char ** argv)
 		if(!strcmp(argv[i],"-levels")){
 			levels=atoi(argv[++i]);
 		}
-		if(!strcmp(argv[i],"-element")) {
+		if(!strcmp(argv[i],"-element")){
 			element=atoi(argv[++i]);
 			level=atoi(argv[++i]);
+		}
+		if(!strcmp(argv[i],"-mode")){
+			sprintf(mode,"%s",argv[++i]);
+		}
+		if(!strcmp(argv[i],"-iter")){
+			iterations=atoi(argv[++i]);
+		}
+		if(!strcmp(argv[i],"-sl")){
+			smooth_levels[0]=atoi(argv[++i]);
+			smooth_levels[1]=atoi(argv[++i]);
 		}
 	}
 
@@ -74,11 +95,12 @@ int main(int argc, char ** argv)
 	printf("\t[INFO] the default number of levels is %d\n",levels);
 	print_debug(0,"\t[INFO] elements file name: %s\n",elements_file_name);
 	print_debug(0,"\t[INFO] vertex file name: %s\n",vertex_file_name);
+	print_debug(0,"\t[INFO] the mode is %s\n",mode);
 	if(debug>0 && element >=0)
 		printf("\t[INFO] The element %d will be refined until level %d\n",element, level);
 
 	/* Call multigrid */
-	multigrid(elements_file_name, vertex_file_name,levels,element,level);
+	multigrid(elements_file_name, vertex_file_name,levels,element,level,mode,iterations,smooth_levels);
 
 	return 0;
 }

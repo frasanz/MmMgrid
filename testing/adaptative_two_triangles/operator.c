@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "operator.h"
 #include "io.h"
 
@@ -35,7 +36,7 @@ void build_operator(int id, Element * element, Vertex * vertex)
 	double C[2][2];
 	double det;
 
-	int i,j;
+	int i,j,k;
 
 	/* Matrix */
 	double Sxx[3][3] = {{ 0.0, 0.0, 0.0},
@@ -79,18 +80,35 @@ void build_operator(int id, Element * element, Vertex * vertex)
 
 	if(debug>3){
 		printf("\t[DEBUG] C= \t[%f, %f; \n\t\t\t %f, %f]\n",C[0][0],C[0][1],C[1][0],C[1][1]);
-		printf("\t[DEBUG] operator=");
+		printf("\t[DEBUG] operator[0]=");
 	}
 
 	for(i=0;i<3;i++){
 		for(j=0;j<3;j++){
-			element[id].operator[i][j]=C[0][0]*Sxx[i][j]+(C[0][1]+C[1][0])*Sxy[i][j]+C[1][1]*Syy[i][j];
+			element[id].operator[0].v[i][j]=C[0][0]*Sxx[i][j]+(C[0][1]+C[1][0])*Sxy[i][j]+C[1][1]*Syy[i][j];
 			if(debug>3)
-				printf("%f ",element[id].operator[i][j]);
+				printf("%f ",element[id].operator[0].v[i][j]);
 		}
 		if(debug>3)
 			printf("\n\t\t\t");
 	}
 	if(debug>3)
 		printf("\n");
+
+	/* We can now scale the operator to the different levels */
+	for(i=1;i<element[id].n_levels;i++){
+		if(debug>4)
+			printf("\t[DEBUG] operator[%d]=",i);
+		for(j=0;j<3;j++){
+			for(k=0;k<3;k++){
+				element[id].operator[i].v[j][k]=element[id].operator[0].v[j][k]*pow(2,i);
+				if(debug>4)
+					printf("%f ",element[id].operator[i].v[j][k]);
+			}
+			if(debug>4)
+				printf("\n\t\t\t");
+		}
+		if(debug>4)
+			printf("\n");
+	}
 }
