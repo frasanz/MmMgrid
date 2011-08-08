@@ -37,7 +37,7 @@ void multigrid(const char * element_file_name,
 							 int * smooth_levels)
 {
 	print_debug(3,"\t[WHERE] In function multigrid\n","");
-	int i,j,k,l;
+	int i,j,k,l,m;
 
 	/* Definitions */
 	Element * element;
@@ -45,7 +45,7 @@ void multigrid(const char * element_file_name,
 	int number_elements;
 	int number_vertex;
 	int n_bytes=0;  // To know the number of bytes used
-	int next_level=(levels > lev ? levels : lev); // The next level to calculate in the algorithm
+	int next_level=(levels > lev ? levels-1 : lev-1); // The next level to calculate in the algorithm
 
 	/* Count the number of elements */
 	number_elements = count_lines(element_file_name);
@@ -90,23 +90,44 @@ void multigrid(const char * element_file_name,
 		for(j=0;j<element[i].n_levels;j++){
 			k=pow(2,j)+1; // k is the number of nodes in the base ofthe triangle
 			l=k*(k+1)/2;  // l is the number of nodes in the mesh (in this level)
-			if(!(element[i].mesh[j].u = (double*)malloc(l*sizeof(double)))){
+			element[i].mesh[j].number_nodes=l; //We save here the number of nodes
+			element[i].mesh[j].number_nodes_base=k;
+
+			if(!(element[i].mesh[j].u = (double**)malloc(k*sizeof(double*)))){
 				print_debug(0,"\t[ERROR] Can't allocate nodes","");
 				exit(CAN_NOT_ALLOCATE_MEMORY);
 			}
-			if(!(element[i].mesh[j].v = (double*)malloc(l*sizeof(double)))){
+			if(!(element[i].mesh[j].v = (double**)malloc(k*sizeof(double*)))){
 				print_debug(0,"\t[ERROR] Can't allocate nodes","");
 				exit(CAN_NOT_ALLOCATE_MEMORY);
 			}
-			if(!(element[i].mesh[j].d = (double*)malloc(l*sizeof(double)))){
+			if(!(element[i].mesh[j].d = (double**)malloc(l*sizeof(double*)))){
 				print_debug(0,"\t[ERROR] Can't allocate nodes","");
 				exit(CAN_NOT_ALLOCATE_MEMORY);
 			}
-			if(!(element[i].mesh[j].f = (double*)malloc(l*sizeof(double)))){
+			if(!(element[i].mesh[j].f = (double**)malloc(l*sizeof(double*)))){
 				print_debug(0,"\t[ERROR] Can't allocate nodes","");
 				exit(CAN_NOT_ALLOCATE_MEMORY);
 			}
-			n_bytes=n_bytes+4*l*sizeof(double);
+			for(m=0;m<k;m++){
+				if(!(element[i].mesh[j].u[m] = (double*)malloc((m+1)*sizeof(double)))){
+					print_debug(0,"\t[ERROR] Can't allocate nodes","");
+					exit(CAN_NOT_ALLOCATE_MEMORY);
+				}
+				if(!(element[i].mesh[j].v[m] = (double*)malloc((m+1)*sizeof(double)))){
+					print_debug(0,"\t[ERROR] Can't allocate nodes","");
+					exit(CAN_NOT_ALLOCATE_MEMORY);
+				}
+				if(!(element[i].mesh[j].d[m] = (double*)malloc((m+1)*sizeof(double)))){
+					print_debug(0,"\t[ERROR] Can't allocate nodes","");
+					exit(CAN_NOT_ALLOCATE_MEMORY);
+				}
+				if(!(element[i].mesh[j].f[m] = (double*)malloc((m+1)*sizeof(double)))){
+					print_debug(0,"\t[ERROR] Can't allocate nodes","");
+					exit(CAN_NOT_ALLOCATE_MEMORY);
+				}
+			}
+			n_bytes=n_bytes+4*k*k*sizeof(double);
 		}
 	}
 
@@ -128,6 +149,12 @@ void multigrid(const char * element_file_name,
 	/* Free memory */
 	for(i=0;i<number_elements;i++){
 		for(j=0;j<element[i].n_levels;j++){
+			for(m=0;m<element[i].mesh[j].number_nodes_base;m++){
+				free(element[i].mesh[j].u[m]);
+				free(element[i].mesh[j].v[m]);
+				free(element[i].mesh[j].d[m]);
+				free(element[i].mesh[j].f[m]);
+			}
 			free(element[i].mesh[j].u);
 			free(element[i].mesh[j].v);
 			free(element[i].mesh[j].d);

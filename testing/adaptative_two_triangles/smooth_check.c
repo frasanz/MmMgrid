@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  aux_multigrid.h
+ *       Filename:  smooth_check.c
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  06/08/11 01:24:47
+ *        Created:  08/08/11 01:48:05
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,11 +16,15 @@
  * =====================================================================================
  */
 
-#ifndef __AUX_MULTIGRID_H_
-#define __AUX_MULTIGRID_H_
+#include <stdio.h>
+#include <stdlib.h>
+#include "smooth_check.h"
 
-void initialize_sub_mesh(double **,int number_nodes_base, double value);
+void smoothcheck(const char * elements_file_name, 
+                  const char * vertex_file_name, 
+									int levels, 
+									int iterations)
+{
+	int i=0;
 
-
-
-#endif /* __AUX_MULTIGRID_H_*/
+}

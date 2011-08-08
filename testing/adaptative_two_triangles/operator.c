@@ -43,13 +43,13 @@ void build_operator(int id, Element * element, Vertex * vertex)
 	                    {-1.0, 2.0,-1.0},
 											{ 0.0, 0.0, 0.0}};
 	
-	double Syy[3][3] = {{ 0.0,-1.0, 0.0},
+	double Syy[3][3] = {{-1.0, 0.0, 0.0},
 	                    { 0.0, 2.0, 0.0},
-											{ 0.0,-1.0, 0.0}};
+											{ 0.0,-0.0,-1.0}};
 
-	double Sxy[3][3] = {{ 0.0, 1.0,-1.0},
+	double Sxy[3][3] = {{ 1.0,-1.0, 0.0},
 	                    { 1.0,-2.0, 1.0},
-											{-1.0, 1.0, 0.0}}; 
+											{ 0.0,-1.0, 1.0}}; 
 
 	/* Initialize matrix B*/
 	B[0][0]=vertex[element[id].node[1]].c[0] - vertex[element[id].node[0]].c[0];

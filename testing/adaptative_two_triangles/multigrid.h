@@ -32,10 +32,12 @@ void multigrid(const char * element_file_name,
 /* Structures */
 
 typedef struct{
-	double * u;
-	double * v;
-	double * d;
-	double * f;
+	double ** u;
+	double ** v;
+	double ** d;
+	double ** f;
+	int number_nodes;							//Number of nodes of the mesh (depends of the level)
+	int number_nodes_base;				//Number of nodes in the mesh in the base
 } Mesh;
 
 typedef struct{

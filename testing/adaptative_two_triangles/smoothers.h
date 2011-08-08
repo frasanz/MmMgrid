@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  aux_multigrid.h
+ *       Filename:  smoothers.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  06/08/11 01:24:47
+ *        Created:  08/08/11 01:10:27
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,11 +16,15 @@
  * =====================================================================================
  */
 
-#ifndef __AUX_MULTIGRID_H_
-#define __AUX_MULTIGRID_H_
+#ifndef __SMOOTHERS_H_
+#define __SMOOTHERS_H_
 
-void initialize_sub_mesh(double **,int number_nodes_base, double value);
+#include "multigrid.h"
+
+/* Functions */
+void smooth(Element element, int this_level);
 
 
 
-#endif /* __AUX_MULTIGRID_H_*/
+#endif /* __SMOOTHERS_H_ */
+
