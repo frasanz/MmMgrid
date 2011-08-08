@@ -16,15 +16,22 @@
  * =====================================================================================
  */
 
+extern int debug;
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "smooth_check.h"
+#include "multigrid.h"
+#include "smoothers.h"
+#include "io.h"
 
-void smoothcheck(const char * elements_file_name, 
-                  const char * vertex_file_name, 
-									int levels, 
-									int iterations)
+void smoothcheck(Element * element, int * smooth_levels)
 {
-	int i=0;
+	print_debug(3,"\t[WHERE] In function smoothcheck\n","");
+	int i;
+	int this_level=element[0].n_levels-1;
 
+	/* Do the smooth */
+	for(i=0;i<smooth_levels[0];i++)
+		smooth(element[0],this_level);
 }

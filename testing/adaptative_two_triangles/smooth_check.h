@@ -19,10 +19,9 @@
 #ifndef __SMOOTH_CHECK_H_
 #define __SMOOTH_CHECK_H_
 
-void smoothcheck(const char * elements_file_name, 
-                  const char * vertex_file_name, 
-									int levels, 
-									int iterations);
+#include "multigrid.h"
+
+void smoothcheck(Element * element, int * smooth_levels);
 
 
 

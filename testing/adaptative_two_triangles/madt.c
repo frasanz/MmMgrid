@@ -106,8 +106,6 @@ int main(int argc, char ** argv)
 		if(debug>0 && element >=0)
 			printf("\t[INFO] The element %d will be refined until level %d\n",element, level);
 
-		/* Call multigrid */
-		multigrid(elements_file_name, vertex_file_name,levels,element,level,mode,iterations,smooth_levels);
 	}
 	else{
 		printf("**** Starting smooth_check ****\n\n");
@@ -117,7 +115,17 @@ int main(int argc, char ** argv)
 		print_debug(0,"\t[INFO] vertex file name: %s\n",vertex_file_name);
 
 		/* Call smooth_check */
-		smoothcheck(elements_file_name, vertex_file_name,levels,iterations);
 	}
+		/* Call multigrid */
+		multigrid(elements_file_name,
+		          vertex_file_name,
+							levels,
+							element,
+							level,
+							mode,
+							iterations,
+							smooth_levels,
+							smooth_check);
+
 	return 0;
 }

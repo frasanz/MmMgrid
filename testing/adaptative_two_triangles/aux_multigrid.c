@@ -33,3 +33,14 @@ void initialize_sub_mesh(double ** sub_mesh, int number_nodes_base, double value
 	}
 }
 
+void calculate_max(Element element)
+{
+	int i,j;
+	for(i=0;i<element.mesh[element.n_levels-1].number_nodes_base;i++){
+		for(j=0;j<=i;j++){
+			if(fabs(element.mesh[element.n_levels-1].u[i][j])>element.max_error)
+				element.max_error=element.mesh[element.n_levels-1].u[i][j];
+		}
+	}
+}
+

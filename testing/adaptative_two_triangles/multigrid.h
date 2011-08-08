@@ -27,7 +27,8 @@ void multigrid(const char * element_file_name,
 							 int level,     // Number of levels of the special element
 							 char * mode,   // w,v or f
 							 int iterations,// Iterations of the algorithm
-							 int * smooth_levels);
+							 int * smooth_levels,
+							 int smooth_check); // If 1, we will run the smooth_check
 
 /* Structures */
 

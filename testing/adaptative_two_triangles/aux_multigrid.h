@@ -18,8 +18,9 @@
 
 #ifndef __AUX_MULTIGRID_H_
 #define __AUX_MULTIGRID_H_
-
+#include "multigrid.h"
 void initialize_sub_mesh(double **,int number_nodes_base, double value);
+void calculate_max(Element element);
 
 
 
