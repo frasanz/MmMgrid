@@ -180,12 +180,14 @@ void multigrid(const char * element_file_name,
 
 		printf("\t[INFO] Iteration # %d\n",i);
 		if(!smooth_check){
-			multigrid_kernel(element,levels,ele,lev,mode,smooth_levels,next_level);
+			multigrid_kernel(element,levels,ele,lev,mode,smooth_levels,next_level,number_elements);
 
 			/* Check the errors */
-			previous_max=element[0].max_error;
-			calculate_max_defect(element,0);
-			printf("\t\tIn level %d max_error=%f\n\t\tratio= %f\n",element[0].n_levels-1, element[0].max_error,element[0].max_error/previous_max);
+			for(e=0;e<number_elements;e++){
+				previous_max=element[e].max_error;
+				calculate_max_defect(element,e);
+				printf("\t\tIn level %d element %d  max_error=%f\n\t\tratio= %f\n",element[e].n_levels-1, e, element[e].max_error,element[e].max_error/previous_max);
+			}
 		}else{
 			if(debug>10){
 				show_sub_mesh(element[0].mesh[element[0].n_levels-1].u,
