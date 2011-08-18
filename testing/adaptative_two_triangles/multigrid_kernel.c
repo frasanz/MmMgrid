@@ -54,6 +54,7 @@ void multigrid_kernel(Element * element,
 
 		/* Initialize mesh */
 		for(e=0;e<number_elements;e++){
+			if(e==ele || this_level < levels){
 			initialize_sub_mesh(element[e].mesh[this_level].d,
 					element[e].mesh[this_level].number_nodes_base,0.0);
 
@@ -65,30 +66,38 @@ void multigrid_kernel(Element * element,
 
 			initialize_sub_mesh(element[e].mesh[this_level-1].u,
 					element[e].mesh[this_level-1].number_nodes_base,0.0);
+			}
 		}
 
 		/* First smooth */
 		for(e=0;e<number_elements;e++){
-			if(debug>10)
-				show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
-			for(i=0;i<smooth_levels[0];i++)
-				smooth_rgb(element[e],this_level);
-			if(debug>10)
-				show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+			if(e==ele || this_level < levels){
+
+				if(debug>10)
+					show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+				for(i=0;i<smooth_levels[0];i++)
+					smooth_rgb(element[e],this_level);
+				if(debug>10)
+					show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+			}
 		}
 
 		/* Calculate the defect */
 		for(e=0;e<number_elements;e++){
-			defect(element[e],this_level);
-			if(debug>10)
-				show_sub_mesh(element[e].mesh[this_level].d,element[e].mesh[this_level].number_nodes_base);
+			if(e==ele || this_level < levels){
+				defect(element[e],this_level);
+				if(debug>10)
+					show_sub_mesh(element[e].mesh[this_level].d,element[e].mesh[this_level].number_nodes_base);
+			}
 		}
 
 		/* Restrict the defect */
 		for(e=0;e<number_elements;e++){
-			restrict_one(element[e],this_level);
-			if(debug>10)
-				show_sub_mesh(element[e].mesh[this_level-1].f,element[e].mesh[this_level-1].number_nodes_base);
+			if(e==ele || this_level < levels){
+				restrict_one(element[e],this_level);
+				if(debug>10)
+					show_sub_mesh(element[e].mesh[this_level-1].f,element[e].mesh[this_level-1].number_nodes_base);
+			}
 		}
 
 		/* Recall to multigrid */
@@ -98,27 +107,33 @@ void multigrid_kernel(Element * element,
 
 		/* Interpolate */
 		for(e=0;e<number_elements;e++){
+			if(e==ele || this_level < levels){
 			interpolate_one(element[e],this_level);
 			if(debug>10)
 				show_sub_mesh(element[e].mesh[this_level].v,element[e].mesh[this_level].number_nodes_base);
+			}
 		}
 
 		/* Add error */
 		for(e=0;e<number_elements;e++){
-			if(debug>10)
-				show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
-			add_error(element[e],this_level);
-			if(debug>10)
-				show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+			if(e==ele || this_level < levels){
+				if(debug>10)
+					show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+				add_error(element[e],this_level);
+				if(debug>10)
+					show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+			}
 		}
 
 
 		/* Second smooth */
 		for(e=0;e<number_elements;e++){
-			for(i=0;i<smooth_levels[1];i++)
-				smooth_rgb(element[e],this_level);
-			if(debug>10)
-				show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+			if(e==ele || this_level < levels){
+				for(i=0;i<smooth_levels[1];i++)
+					smooth_rgb(element[e],this_level);
+				if(debug>10)
+					show_sub_mesh(element[e].mesh[this_level].u,element[e].mesh[this_level].number_nodes_base);
+			}
 		}
 
 		/* In the top level, we recalculate the defect*/

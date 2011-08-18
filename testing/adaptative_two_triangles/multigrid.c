@@ -186,7 +186,7 @@ void multigrid(const char * element_file_name,
 			for(e=0;e<number_elements;e++){
 				previous_max=element[e].max_error;
 				calculate_max_defect(element,e);
-				printf("\t\tIn level %d element %d  max_error=%f\n\t\tratio= %f\n",element[e].n_levels-1, e, element[e].max_error,element[e].max_error/previous_max);
+				printf("\t\tIn level %d element %d  max_error=%f\t\tratio= %f\n",element[e].n_levels-1, e, element[e].max_error,element[e].max_error/previous_max);
 			}
 		}else{
 			if(debug>10){

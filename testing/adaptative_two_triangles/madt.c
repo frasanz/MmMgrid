@@ -83,6 +83,8 @@ int main(int argc, char ** argv)
 		if(!strcmp(argv[i],"-element")){
 			element=atoi(argv[++i]);
 			level=atoi(argv[++i]);
+			if(level<levels) // The special element has at least the default number of levels
+				level=levels;
 		}
 		if(!strcmp(argv[i],"-mode")){
 			sprintf(mode,"%s",argv[++i]);
