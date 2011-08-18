@@ -36,8 +36,10 @@ int main(int argc, char ** argv)
 	int level=-1;                                   // number of levels of the special element
 	char mode[1];                                   // The default multigrid mode
 	int iterations=5;				   											// The default number of iterations
-	int smooth_levels[2];														// Default smooth levels
+	int smooth_levels[2]={1,1};											// Default smooth levels
 	int smooth_check=0;                             // If 1 run in smooth_check mode
+	int restrict_check=0;														// If 1 run in restrict_check mode
+	int interpolate_check=0;												// If 1 run in interpolate_check mode
 
 	/* Variables de uso */
 	const char *uso="Use: %s [Options]\n "
@@ -48,9 +50,11 @@ int main(int argc, char ** argv)
 	 " -element m n               the element m has n levels\n"
 	 " -mode f|v|w                multigrid mode, default v\n"
 	 " -iter n                    the number of iterations\n"
-	 " -sl n m                    smooth levels, default 1 1 \n"
+	 " -sl n m                    smooth levels, default 1 1\n"
 	 " -d int                     level of debug\n"
-	 " -smooth_check type         run in smooth_check mode\n"
+	 " -smooth_check              run in smooth_check mode\n"
+	 " -restrict_check            check the restrict function\n"
+	 " -interpolate_check         check the interpolate function\n"
 	 " -h | --help                show this help\n\n";
 
 
@@ -93,9 +97,35 @@ int main(int argc, char ** argv)
 		if(!strcmp(argv[i],"-smooth_check")){
 			smooth_check=1;
 		}
+		if(!strcmp(argv[i],"-restrict_check")){
+			restrict_check=1;
+		}
+		if(!strcmp(argv[i],"-interpolate_check")){
+			interpolate_check=1;
+		}
 	}
-
-	if(!smooth_check){
+	if(smooth_check){
+		printf("**** Starting smooth_check ****\n\n");
+		printf("[NOTE] This will run the desire smoother with the element\n");
+		printf("[NOTE] in the level max(levels)\n");
+		print_debug(0,"\t[INFO] elements file name: %s\n",elements_file_name);
+		print_debug(0,"\t[INFO] vertex file name: %s\n",vertex_file_name);
+	}
+	else if(restrict_check){
+		printf("**** Starting restrict_check ****\n\n");
+		printf("[NOTE] This will run the restrict_check function\n");
+		printf("[NOTE] in the level max(levels)\n");
+		print_debug(0,"\t[INFO] elements file name: %s\n",elements_file_name);
+		print_debug(0,"\t[INFO] vertex file name: %s\n",vertex_file_name);
+	}
+	else if(interpolate_check){
+		printf("**** Starting interpolate_check ****\n\n");
+		printf("[NOTE] This will run the interpolate_check function\n");
+		printf("[NOTE] in the level max(levels)\n");
+		print_debug(0,"\t[INFO] elements file name: %s\n",elements_file_name);
+		print_debug(0,"\t[INFO] vertex file name: %s\n",vertex_file_name);
+	}
+	else{
 		/* Print the program call */
 		printf("**** Starting the multigrid algorithm ****\n"
 				"\t[INFO] debug level=%d\n",debug);
@@ -107,15 +137,6 @@ int main(int argc, char ** argv)
 			printf("\t[INFO] The element %d will be refined until level %d\n",element, level);
 
 	}
-	else{
-		printf("**** Starting smooth_check ****\n\n");
-		printf("[NOTE] This will run the desire smoother with the element\n");
-		printf("[NOTE] in the level max(levels)\n");
-		print_debug(0,"\t[INFO] elements file name: %s\n",elements_file_name);
-		print_debug(0,"\t[INFO] vertex file name: %s\n",vertex_file_name);
-
-		/* Call smooth_check */
-	}
 		/* Call multigrid */
 		multigrid(elements_file_name,
 		          vertex_file_name,
@@ -125,7 +146,9 @@ int main(int argc, char ** argv)
 							mode,
 							iterations,
 							smooth_levels,
-							smooth_check);
+							smooth_check,
+							restrict_check,
+							interpolate_check);
 
 	return 0;
 }

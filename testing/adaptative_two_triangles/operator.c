@@ -43,13 +43,21 @@ void build_operator(int id, Element * element, Vertex * vertex)
 	                    {-1.0, 2.0,-1.0},
 											{ 0.0, 0.0, 0.0}};
 	
-	double Syy[3][3] = {{-1.0, 0.0, 0.0},
+/* 	double Syy[3][3] = {{-1.0, 0.0, 0.0},
 	                    { 0.0, 2.0, 0.0},
 											{ 0.0,-0.0,-1.0}};
 
-	double Sxy[3][3] = {{ 1.0,-1.0, 0.0},
+double Sxy[3][3] = {{ 1.0,-1.0, 0.0},
 	                    { 1.0,-2.0, 1.0},
-											{ 0.0,-1.0, 1.0}}; 
+											{ 0.0,-1.0, 1.0}}; */
+	double Sxy[3][3] = {{ -1.0,1.0, 0.0},
+	                    { 1.0,-2.0, 1.0},
+											{ 0.0,1.0, -1.0}};
+
+	double Syy[3][3] = {{0.0, -1.0, 0.0},
+	                    { 0.0, 2.0, 0.0},
+											{ 0.0,-1.0,0.0}};
+
 
 	/* Initialize matrix B*/
 	B[0][0]=vertex[element[id].node[1]].c[0] - vertex[element[id].node[0]].c[0];
@@ -85,7 +93,7 @@ void build_operator(int id, Element * element, Vertex * vertex)
 
 	for(i=0;i<3;i++){
 		for(j=0;j<3;j++){
-			element[id].operator[0].v[i][j]=C[0][0]*Sxx[i][j]+(C[0][1]+C[1][0])*Sxy[i][j]+C[1][1]*Syy[i][j];
+			element[id].operator[0].v[i][j]=C[0][0]*Sxx[i][j]+0.5*(C[0][1]+C[1][0])*Sxy[i][j]+C[1][1]*Syy[i][j];
 			if(debug>3)
 				printf("%f ",element[id].operator[0].v[i][j]);
 		}
@@ -101,7 +109,7 @@ void build_operator(int id, Element * element, Vertex * vertex)
 			printf("\t[DEBUG] operator[%d]=",i);
 		for(j=0;j<3;j++){
 			for(k=0;k<3;k++){
-				element[id].operator[i].v[j][k]=element[id].operator[0].v[j][k]*pow(2,i);
+				element[id].operator[i].v[j][k]=element[id].operator[0].v[j][k]*pow(element[id].mesh[i].number_nodes_base-1,2);
 				if(debug>4)
 					printf("%f ",element[id].operator[i].v[j][k]);
 			}
@@ -110,5 +118,17 @@ void build_operator(int id, Element * element, Vertex * vertex)
 		}
 		if(debug>4)
 			printf("\n");
+	}
+}
+void show_operator(Element element)
+{
+	int i,j,k;
+	for(i=0;i<element.n_levels;i++){
+		for(j=0;j<3;j++){
+			for(k=0;k<3;k++)
+				printf("%f ",element.operator[i].v[j][k]);
+			printf("\n");
+		}
+		printf("\n");
 	}
 }

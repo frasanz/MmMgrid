@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  smooth_check.h
+ *       Filename:  restrict.h
  *
- *    Description:  To test smoothers 
+ *    Description:  
  *
  *        Version:  1.0
- *        Created:  08/08/11 01:44:53
+ *        Created:  15/08/11 16:06:07
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,15 +16,10 @@
  * =====================================================================================
  */
 
-#ifndef __SMOOTH_CHECK_H_
-#define __SMOOTH_CHECK_H_
-
+#ifndef __RESTRICT__H_
+#define __RESTRICT__H_
 #include "multigrid.h"
+void restrictcheck(Element * element);
 
-void smoothcheck(Element * element, int * smooth_levels,int iter);
-
-
-
-
-#endif /* __SMOOTH_CHECK_H_ */
+#endif /* __RESTRICT__H_ */
 

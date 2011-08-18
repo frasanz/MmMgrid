@@ -25,6 +25,9 @@
 #include "operator.h"
 #include "multigrid_kernel.h"
 #include "smooth_check.h"
+#include "aux_multigrid.h"
+#include "restrict.h"
+#include "interpolate.h"
 extern int debug;
 
 void multigrid(const char * element_file_name, 
@@ -35,7 +38,9 @@ void multigrid(const char * element_file_name,
 							 char * mode,
 							 int iterations,
 							 int * smooth_levels,
-							 int smooth_check)
+							 int smooth_check,
+							 int restrict_check,
+							 int interpolate_check)
 {
 	print_debug(3,"\t[WHERE] In function multigrid\n","");
 	int e,i,j,k,l,m;
@@ -150,25 +155,50 @@ void multigrid(const char * element_file_name,
 				element[e].mesh[this_level].number_nodes_base,0.0);
 
 		initialize_sub_mesh(element[e].mesh[this_level].u,
-				element[e].mesh[this_level].number_nodes_base,7.0);
+				element[e].mesh[this_level].number_nodes_base,1.0);
+
+		bound_sub_mesh(element[e].mesh[this_level].u,
+				element[e].mesh[this_level].number_nodes_base,0.0);
+
 	}
+
+
+  /* Some checks modes */
+	if(restrict_check){
+		restrictcheck(element);
+		exit(0);
+	}
+	else if(interpolate_check){
+		interpolatecheck(element);
+		exit(0);
+	}
+	
 
 
 	/* We can now call the multigrid method */
 	for(i=0;i<iterations;i++){
+
 		printf("\t[INFO] Iteration # %d\n",i);
-		if(!smooth_check)
+		if(!smooth_check){
 			multigrid_kernel(element,levels,ele,lev,mode,smooth_levels,next_level);
-		else{
-			smoothcheck(element,smooth_levels);
 
 			/* Check the errors */
 			previous_max=element[0].max_error;
-			calculate_max(element[0]);
+			calculate_max_defect(element,0);
+			printf("\t\tIn level %d max_error=%f\n\t\tratio= %f\n",element[0].n_levels-1, element[0].max_error,element[0].max_error/previous_max);
+		}else{
+			if(debug>10){
+				show_sub_mesh(element[0].mesh[element[0].n_levels-1].u,
+						element[0].mesh[element[0].n_levels-1].number_nodes_base);
+			}
+			smoothcheck(element,smooth_levels,i);
+
+			/* Check the errors */
+			previous_max=element[0].max_error;
+			calculate_max_defect(element,0);
 			printf("\t[INFO] ratio= %f\n",element[0].max_error/previous_max);
 		}
 	}
-
 	/* Free memory */
 	for(i=0;i<number_elements;i++){
 		for(j=0;j<element[i].n_levels;j++){

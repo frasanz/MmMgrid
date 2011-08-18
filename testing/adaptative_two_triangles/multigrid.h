@@ -28,7 +28,9 @@ void multigrid(const char * element_file_name,
 							 char * mode,   // w,v or f
 							 int iterations,// Iterations of the algorithm
 							 int * smooth_levels,
-							 int smooth_check); // If 1, we will run the smooth_check
+							 int smooth_check,    // If 1, we will run the smooth_check
+							 int restrict_check , // If 1, we will run the restrict_check
+							 int interpolate_check); // If 1, we will run the interpolate_check
 
 /* Structures */
 
