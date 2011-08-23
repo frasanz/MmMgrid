@@ -45,7 +45,7 @@ void multigrid_kernel(Element * element,
 	/* Definitions */
 	int next_level;
 
-	if(this_level==1){
+	if(this_level==0){
 		/* Solve exactly: We can solve exactly in level 2 or go beyond */
 		//solve_exactly(element[e]);
 	}
