@@ -1,4 +1,4 @@
-CC=i686-w64-mingw32-gcc
+CC=gcc
 CCFLAGS=-Wall -O3 -g
 INCLUDES=-lm
 Default = madt

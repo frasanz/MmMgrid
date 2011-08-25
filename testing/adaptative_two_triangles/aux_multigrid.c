@@ -73,3 +73,13 @@ void show_sub_mesh(double ** sub_mesh, int number_nodes_base)
 		printf("\n");
 	}
 }
+void show_structure(Element * element, Edge * edge, int number_element, int number_edges)
+{
+	int i;
+	for(i=0;i<number_element;i++){
+		printf("\t[INFO] Element %d[%d]  has edges %d %d %d\n",i,element[i].id,element[i].edge[0],element[i].edge[1],element[i].edge[2]);
+	}
+	for(i=0;i<number_edges;i++){
+		printf("\t[INFO] Edge %d[%d] is used by elements %d %d and has vertex %d %d\n",i,edge[i].id,edge[i].element[0],edge[i].element[1],edge[i].node[0],edge[i].node[1]);
+	}
+}

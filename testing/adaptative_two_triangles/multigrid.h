@@ -44,17 +44,34 @@ typedef struct{
 } Mesh;
 
 typedef struct{
+	double ** u;
+	double ** v;
+	double ** d;
+	double ** f;
+	int number_nodes_base;
+} One_edge;
+
+typedef struct{
 	double v[3][3];
 } Operator;
 
 typedef struct{
 	int id;
 	int node[3];
+	int edge[3];
 	int n_levels;
 	Operator * operator;
 	Mesh * mesh;
 	double max_error;
 } Element;
+
+typedef struct{
+	int id;
+	int node[2];
+	int element[2];
+	int n_levels;
+	One_edge * oe;
+} Edge;
 
 typedef struct{
 	int id;

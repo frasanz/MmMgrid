@@ -47,9 +47,11 @@ void multigrid(const char * element_file_name,
 
 	/* Definitions */
 	Element * element;
+	Edge * edge;
 	Vertex * vertex;
 	int number_elements;
 	int number_vertex;
+	int number_edges;
 	int n_bytes=0;  // To know the number of bytes used
 	int next_level=(levels > lev ? levels-1 : lev-1); // The next level to calculate in the algorithm
 	int this_level;
@@ -64,6 +66,7 @@ void multigrid(const char * element_file_name,
 	number_vertex = count_lines(vertex_file_name);
 	if(debug>2)
 		printf("\t[INFO] Number of vertex = %d\n",number_vertex);
+
 
 	/* Memory malloc */
 	if(!(element = (Element*)malloc(number_elements*sizeof(Element)))){
@@ -80,6 +83,17 @@ void multigrid(const char * element_file_name,
 
 	/* Scan vertex */
 	scan_vertex(vertex, vertex_file_name);
+
+	/* Count the number of commons edges */
+	number_edges = count_number_edges(element, number_elements);
+	if(debug>2)
+		printf("\t[INFO] Number of common edges = %d\n",number_edges);
+
+	/* Memory malloc for edges */
+	if(!(edge= (Edge*)malloc(number_edges*sizeof(Edge)))){
+		print_debug(0,"\t[ERROR] Can't allocate edge","");
+		exit(CAN_NOT_ALLOCATE_MEMORY);
+	}
 
 	/* Now, we need a hierarchy of mesh for each element */
 	for(i=0;i<number_elements;i++) {
@@ -143,6 +157,28 @@ void multigrid(const char * element_file_name,
 	for(i=0;i<number_elements;i++){
 		build_operator(i,element,vertex);
 	}
+
+	/* Assing edges with elemets */
+	check_structure(element, edge, number_elements);
+	if(debug>2)
+		show_structure(element, edge, number_elements, number_edges);
+
+	/* Allocation for the edges */
+	for(i=0;i<number_edges;i++){
+		edge[i].n_levels=levels;
+		if(!(edge[i].oe = (One_edge*)malloc(n_levels*sizeof(One_edge)))){
+			print_debug(0,"\t[ERROR] Can't allocate One Edge","");
+			exit(CAN_NOT_ALLOCATE_MEMORY);
+		}
+		for(j=0;j<number_nodes_base;j++){
+			k=pow(2,j)+1; // k is the number of nodes in the base ofthe triangle;
+			edge[i].oe[j].number_nodes_base=k;
+
+		}
+
+	}
+
+
 
 	/* Print the number of bytes used */
 	if(debug>1)
@@ -220,5 +256,6 @@ void multigrid(const char * element_file_name,
 	}
 	free(element);
 	free(vertex);
+	free(edge);
 }
 
