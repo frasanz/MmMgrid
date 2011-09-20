@@ -24,7 +24,7 @@
 /* Functions */
 void defect(Element element, int this_level);
 void smooth(Element element, int this_level);
-void smooth_rgb(Element element, int this_level);
+void smooth_rgb(Element element, int this_level,int color);
 void restrict_one(Element element, int this_level);
 void interpolate_one(Element element, int this_level);
 void add_error(Element element, int this_level);

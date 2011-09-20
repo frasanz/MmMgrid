@@ -33,7 +33,7 @@ void interpolatecheck(Element * element)
 	FILE * f;
 
 	initialize_sub_mesh(element[0].mesh[this_level-1].u,element[0].mesh[this_level-1].number_nodes_base,43.0);
-	bound_sub_mesh(element[0].mesh[this_level-1].u,element[0].mesh[this_level-1].number_nodes_base,0.0);
+	//bound_sub_mesh(element[0].mesh[this_level-1].u,element[0].mesh[this_level-1].number_nodes_base,0.0);
 	initialize_sub_mesh(element[0].mesh[this_level].v,element[0].mesh[this_level].number_nodes_base,0.0);
 	interpolate_one(element[0],this_level);
 

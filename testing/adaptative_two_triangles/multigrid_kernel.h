@@ -29,11 +29,8 @@ void multigrid_kernel(Element * element,
 											int lev,							 // Number of levels of the special element
 											char * mode,           // v,w or f
 											int * smooth_levels,
-											int next_level,         // The next level
-											int number_elements     // The number of elements
+											int next_level,        // The next level
+											int number_elements    // The number of elements
 											);
 
 #endif /* __MULTIGRID_H_ */
-
-
-

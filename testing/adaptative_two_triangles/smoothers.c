@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "smoothers.h"
 #include "io.h"
+#include "ghost.h"
 
 extern int debug;
 
@@ -27,8 +28,10 @@ void defect(Element element, int this_level)
 {
 	print_debug(3,"\t[WHERE] In function defect\n", "");
 	int i,j;
-	for(i=1;i<element.mesh[this_level].number_nodes_base-1;i++){
-		for(j=1;j<i;j++){
+	for(i=0;i<element.mesh[this_level].number_nodes_base;i++){
+		for(j=0;j<=i;j++){
+			if(i>0 && j>0 && j<i && i< element.mesh[this_level].number_nodes_base-1
+				&& j< element.mesh[this_level].number_nodes_base-1){ /* Interior points */
 			element.mesh[this_level].d[i][j]=element.mesh[this_level].f[i][j]-
 			    (element.operator[this_level].v[0][0] * element.mesh[this_level].u[i-1][j-1] +
 					 element.operator[this_level].v[0][1] * element.mesh[this_level].u[i-1][j  ] +
@@ -38,38 +41,34 @@ void defect(Element element, int this_level)
 					 element.operator[this_level].v[2][1] * element.mesh[this_level].u[i+1][j  ] +
 					 element.operator[this_level].v[2][2] * element.mesh[this_level].u[i+1][j+1]
 					);
+			}
+			else if(i==element.mesh[this_level].number_nodes_base-1
+					&& j> 0
+					&& j< element.mesh[this_level].number_nodes_base-1){
+				element.mesh[this_level].d[i][j]=element.mesh[this_level].f[i][j]-
+					(element.operator[this_level].v[0][0] * element.mesh[this_level].u[i-1][j-1] +
+					 element.operator[this_level].v[0][1] * element.mesh[this_level].u[i-1][j  ] +
+					 element.operator[this_level].v[1][0] * element.mesh[this_level].u[i  ][j-1] +
+					 element.operator[this_level].v[1][1] * element.mesh[this_level].u[i  ][j  ] +
+					 element.operator[this_level].v[1][2] * element.mesh[this_level].u[i  ][j+1] +
+					 element.operator[this_level].v[2][1] * element.mesh[this_level].u_gh[0][j] +
+					 element.operator[this_level].v[2][2] * element.mesh[this_level].u_gh[0][j+1]
+					);
+			}
 		}
 	}
 }
 
-/* TODO: You have to check this*/
-void smooth(Element element, int this_level)
-{
-	print_debug(3,"\t[WHERE] In function smooth\n","");
-	int i,j;
-	for(i=1;i<element.mesh[this_level].number_nodes_base-1;i++){
-		for(j=1;j<i;j++){
-			element.mesh[this_level].u[i][j]=
-				(element.mesh[this_level].f[i][j]-
-					(element.operator[this_level].v[0][0] * element.mesh[this_level].u[i-1][j-1] +
-					 element.operator[this_level].v[0][1] * element.mesh[this_level].u[i-1][j  ] +
-					 element.operator[this_level].v[1][0] * element.mesh[this_level].u[i  ][j-1] +
-					 element.operator[this_level].v[1][2] * element.mesh[this_level].u[i  ][j+1] +
-					 element.operator[this_level].v[2][1] * element.mesh[this_level].u[i+1][j]   +
-					 element.operator[this_level].v[2][2] * element.mesh[this_level].u[i+1][j+1])
-				)/element.operator[this_level].v[1][1];
-		}
-	}
-}
 /* TODO: Do this in a better way*/
-void smooth_rgb(Element element, int this_level)
+void smooth_rgb(Element element, int this_level,int color)
 {
 	print_debug(3,"\t[WHERE] In function smooth_rgb\n","");
-	int i,j,k;
-	for(k=0;k<3;k++){
-		for(i=1;i<element.mesh[this_level].number_nodes_base-1;i++){
-			for(j=1;j<i;j++){
-				if((i+j)%3==k){
+	int i,j;
+	for(i=0;i<element.mesh[this_level].number_nodes_base;i++){
+		for(j=0;j<=i;j++){
+			if((i+j)%3==color){
+				if(i>0 && j>0 && j<i && i< element.mesh[this_level].number_nodes_base-1 
+						&& j< element.mesh[this_level].number_nodes_base-1){ /* Interior points */
 					element.mesh[this_level].u[i][j]=
 						(element.mesh[this_level].f[i][j]-
 						 (element.operator[this_level].v[0][0] * element.mesh[this_level].u[i-1][j-1] +
@@ -80,16 +79,30 @@ void smooth_rgb(Element element, int this_level)
 							element.operator[this_level].v[2][2] * element.mesh[this_level].u[i+1][j+1])
 						)/element.operator[this_level].v[1][1];
 				}
+				else if(i==element.mesh[this_level].number_nodes_base-1 
+						&& j>0 
+						&& j<element.mesh[this_level].number_nodes_base-1){  /* This is the edge 0-1 */
+					if(element.nei[0][0]>-1){ /* There is a neirghbor */
+					element.mesh[this_level].u[i][j]=
+						(element.mesh[this_level].f[i][j]-
+						 (element.operator[this_level].v[0][0] * element.mesh[this_level].u[i-1][j-1] +
+							element.operator[this_level].v[0][1] * element.mesh[this_level].u[i-1][j  ] +
+							element.operator[this_level].v[1][0] * element.mesh[this_level].u[i  ][j-1] +
+							element.operator[this_level].v[1][2] * element.mesh[this_level].u[i  ][j+1] +
+							element.operator[this_level].v[2][1] * element.mesh[this_level].u_gh[0][j]  +
+							element.operator[this_level].v[2][2] * element.mesh[this_level].u_gh[0][j+1])
+						)/element.operator[this_level].v[1][1];
+					}
+				}
 			}
 		}
 	}
 }
 void restrict_one(Element element, int this_level)
 {
-	print_debug(3,"\t[WHERE] In function restrict_one\n","");
 	int i,j,k,l;
-	for(i=0;i<element.mesh[this_level-1].number_nodes_base-1;i++){
-		for(j=1;j<i;j++){
+	for(i=1;i<element.mesh[this_level-1].number_nodes_base-1;i++){  /* This is the  */
+		for(j=1;j<i;j++){                                             /* interior of the triangle */
 			k=2*i;
 			l=2*j;
 			element.mesh[this_level-1].f[i][j]=(element.mesh[this_level].d[k  ][l  ]+0.5*
@@ -101,6 +114,21 @@ void restrict_one(Element element, int this_level)
 																					element.mesh[this_level].d[k+1][l+1]))/4;
 		}
 	}
+	for(j=1;j<element.mesh[this_level-1].number_nodes_base-1;j++){ 
+		k=2*(element.mesh[this_level-1].number_nodes_base-1);
+		l=2*j;
+		element.mesh[this_level-1].f[i][j]=(element.mesh[this_level].d[k ][l ]+0.5*
+																			 (element.mesh[this_level].d[k][l-1]+element.mesh[this_level].d[k][l+1]))/2; /* Edge 0-1 */
+		element.mesh[this_level-1].f[j][j]=(element.mesh[this_level].d[l][l]+0.5*
+																			 (element.mesh[this_level].d[l-1][l-1]+element.mesh[this_level].d[l+1][l+1]))/2; /* Edge 1-2 */
+		element.mesh[this_level-1].f[j][0]=(element.mesh[this_level].d[l][0]+0.5*
+																			 (element.mesh[this_level].d[l-1][0]+element.mesh[this_level].d[l+1][0]))/2;  /* Edge 2-0  */
+	}
+	element.mesh[this_level-1].f[0][0]=element.mesh[this_level].d[0][0]; /* 2= (0,0) */
+	element.mesh[this_level-1].f[element.mesh[this_level-1].number_nodes_base-1][element.mesh[this_level-1].number_nodes_base-1]=
+		element.mesh[this_level].d[element.mesh[this_level].number_nodes_base-1][element.mesh[this_level].number_nodes_base-1]; /* 1=(max,max)*/
+	element.mesh[this_level-1].f[element.mesh[this_level-1].number_nodes_base-1][0]=
+		element.mesh[this_level].d[element.mesh[this_level].number_nodes_base-1][0]; /* 0=(max,0) */
 }
 
 /* TODO: Do this in a best way  */
@@ -109,23 +137,17 @@ void interpolate_one(Element element, int this_level)
 {
 	print_debug(3,"\t[WHERE] In function interpolate_one\n", "");
 	int i,j,k,l;
-	for(i=1;i<element.mesh[this_level-1].number_nodes_base-1;i++){
-		for(j=1;j<i;j++){
+	for(i=0;i<element.mesh[this_level-1].number_nodes_base;i++){
+		for(j=0;j<=i;j++){
 			k=2*i;
 			l=2*j;
 			element.mesh[this_level].v[k  ][l  ]= element.mesh[this_level-1].u[i  ][j  ];
-			element.mesh[this_level].v[k-1][l-1]=(element.mesh[this_level-1].u[i  ][j  ]+
-							                              element.mesh[this_level-1].u[i-1][j-1])/2;
-			element.mesh[this_level].v[k-1][l  ]=(element.mesh[this_level-1].u[i  ][j  ]+
-																						element.mesh[this_level-1].u[i-1][j  ])/2;
-			element.mesh[this_level].v[k  ][l+1]=(element.mesh[this_level-1].u[i  ][j  ]+
-																						element.mesh[this_level-1].u[i  ][j+1])/2;
-			element.mesh[this_level].v[k+1][l+1]=(element.mesh[this_level-1].u[i  ][j  ]+
-																						element.mesh[this_level-1].u[i+1][j+1])/2;
-			element.mesh[this_level].v[k+1][l  ]=(element.mesh[this_level-1].u[i  ][j  ]+
-																						element.mesh[this_level-1].u[i+1][j  ])/2;
-			element.mesh[this_level].v[k  ][l-1]=(element.mesh[this_level-1].u[i  ][j  ]+
-																						element.mesh[this_level-1].u[i  ][j-1])/2;
+			if(k+1<element.mesh[this_level].number_nodes_base)
+				element.mesh[this_level].v[k+1][l  ] = (element.mesh[this_level-1].u[i  ][j  ]+ element.mesh[this_level-1].u[i+1][j ])/2;
+			if((l+1)<=k)
+				element.mesh[this_level].v[k  ][l+1] = (element.mesh[this_level-1].u[i  ][j  ]+ element.mesh[this_level-1].u[i ][j+1])/2;
+			if(l+1<element.mesh[this_level].number_nodes_base && k+1<element.mesh[this_level].number_nodes_base)
+				element.mesh[this_level].v[k+1][l+1] = (element.mesh[this_level-1].u[i  ][j  ]+ element.mesh[this_level-1].u[i+1][j+1])/2;
 		}
 	}
 }
@@ -134,8 +156,8 @@ void add_error(Element element, int this_level)
 {
 	print_debug(3,"\t[WHERE] In function add_error\n","");
 	int i,j;
-	for(i=1;i<element.mesh[this_level].number_nodes_base-1;i++){
-		for(j=1;j<i;j++){
+	for(i=0;i<element.mesh[this_level].number_nodes_base;i++){
+		for(j=0;j<=i;j++){
 			element.mesh[this_level].u[i][j]=element.mesh[this_level].u[i][j]+
 																			 element.mesh[this_level].v[i][j];
 		}

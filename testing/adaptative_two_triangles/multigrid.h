@@ -36,9 +36,13 @@ void multigrid(const char * element_file_name,
 
 typedef struct{
 	double ** u;
+	double ** u_gh;								//Ghosts nodes, will be allocated if needed
 	double ** v;
+	double ** v_gh;               //Ghosts nodes 
 	double ** d;
-	double ** f;
+	double ** d_gh;               //...
+	double ** f; 
+	double ** f_gh;								//...
 	int number_nodes;							//Number of nodes of the mesh (depends of the level)
 	int number_nodes_base;				//Number of nodes in the mesh in the base
 } Mesh;
@@ -59,6 +63,7 @@ typedef struct{
 	int id;
 	int node[3];
 	int edge[3];
+	int nei[3][3];
 	int n_levels;
 	Operator * operator;
 	Mesh * mesh;

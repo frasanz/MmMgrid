@@ -4,9 +4,9 @@ INCLUDES=-lm
 Default = madt
 
 madt: madt.c io.o multigrid.o operator.o multigrid_kernel.o aux_multigrid.o smoothers.o smooth_check.o \
-      restrict.o interpolate.o
+      restrict.o interpolate.o ghost.o
 	$(CC) $(CCFLAGS) madt.c io.o multigrid.o operator.o multigrid_kernel.o \
-	                 aux_multigrid.o smooth_check.o smoothers.o restrict.o interpolate.o $(INCLUDES) -o madt
+	                 aux_multigrid.o smooth_check.o smoothers.o restrict.o interpolate.o ghost.o $(INCLUDES) -o madt
 io.o: io.c
 	$(CC) $(CCFLAGS) io.c -c 
 multigrid.o: multigrid.c
@@ -25,5 +25,7 @@ restrict.o: restrict.c
 	$(CC) $(CCFLAGS) restrict.c -c
 interpolate.o: interpolate.c
 	$(CC) $(CCFLAGS) interpolate.c -c
+ghost.o: ghost.c
+	$(CC) $(CCFLAGS) ghost.c -c
 clean:
 	rm -rf madt *.o original_sub_mesh restrict_sub_mesh interpolate_sub_mesh *out

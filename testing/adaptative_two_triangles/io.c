@@ -106,7 +106,10 @@ void check_structure(Element * element, Edge * edge, int number_elements)
 {
 	int i,j,k,l;
 	int coincidencia;
-	int v1,v2,v3,v4;
+	int v1=0;
+	int v2=0;
+	int v3=0;
+	int v4=0;
 	int edge_number=0;
 	for(i=0;i<number_elements;i++){
 		element[i].edge[0]=-1;
@@ -154,4 +157,69 @@ void check_structure(Element * element, Edge * edge, int number_elements)
 		}
 	}
 }
+
+void check_structure_elements(Element * element, int number_elements)
+{
+	int i,j,k,l;
+	int coincidencia;
+	int v1=0;
+	int v2=0;
+	int v3=0;
+	int v4=0;
+	int who_0,who_1;
+	for(i=0;i<number_elements;i++){
+		element[i].nei[0][0]=-1;
+		element[i].nei[1][0]=-1;
+		element[i].nei[2][0]=-1;
+	}
+
+	for(i=0;i<number_elements;i++){
+		for(j=i+1;j<number_elements;j++){
+			coincidencia=0;
+			for(k=0;k<3;k++){
+				for(l=0;l<3;l++){
+					if(element[i].node[k]==element[j].node[l]){
+						coincidencia++;
+						printf("Coincidencia %d\n",coincidencia);
+						if(coincidencia==1){
+							v1=k;
+							v2=l;
+						} else if(coincidencia==2){
+							v3=k;
+							v4=l;
+						}
+					}
+				}
+			}
+			if(coincidencia==2){
+				if(v3+v1==1)
+					who_0=0;
+				else if(v3+v1==2)
+					who_0=2;
+				else if(v3+v1==3)
+					who_0=1;
+				if(v4+v2==1)
+					who_1=0;
+				else if(v4+v2==2)
+					who_1=2;
+				else if(v4+v2==3)
+					who_1=1;
+				element[i].nei[who_0][0]=j;
+				element[j].nei[who_1][0]=i;
+				element[i].nei[who_0][1]=who_1;
+				element[j].nei[who_1][1]=who_0;
+				printf("%d %d %d %d\n",v1,v3,v2,v4);
+				if(v3-v1 == 1 || v3-v1==-2)
+					element[i].nei[who_0][2]=1;
+				else
+					element[i].nei[who_0][2]=-1;
+				if(v4-v2 == 1 || v4-v2==-2)
+					element[j].nei[who_1][2]=1;
+				else
+					element[j].nei[who_1][2]=-1;
+			}
+		}
+	}
+}
+
 

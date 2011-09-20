@@ -50,8 +50,11 @@ void smoothcheck(Element * element, int * smooth_levels,int iter)
 
 
 	/* Do the smooth */
-	for(i=0;i<smooth_levels[0];i++)
-		smooth_rgb(element[0],this_level);
+	for(i=0;i<smooth_levels[0];i++){
+		smooth_rgb(element[0],this_level,0);
+		smooth_rgb(element[0],this_level,1);
+		smooth_rgb(element[0],this_level,2);
+	}
 
 	/* Write the post smooth u*/
 	sprintf(out_file,"post_smooth_sub_mesh_%d.out",iter);

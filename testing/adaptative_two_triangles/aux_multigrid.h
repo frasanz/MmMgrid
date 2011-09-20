@@ -24,6 +24,8 @@ void calculate_max_defect(Element * element, int id);
 void show_sub_mesh(double **, int number_nodes_base);
 void bound_sub_mesh(double **,int number_nodes_base, double value);
 void show_structure(Element * element, Edge * edge, int number_element, int number_edges);
+void show_structure_elements(Element * element, int number_element);
+void copy_u_to_edges(Element * element, Edge * edge, int number_element, int number_edges,int level);
 
 
 

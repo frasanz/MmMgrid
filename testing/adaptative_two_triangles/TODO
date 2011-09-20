@@ -1,0 +1,24 @@
+----Para porder enseñárselo a Paco---
+
+Testear triángulos no contiguos
+
+Testear triángulos no contiguos diferentes niveles
+
+Testear triángulos contiguos 
+
+Empezar triángulos contiguos diferentes niveles
+
+------------------------------------------------
+===============================================
+------------------------------------------------
+
+dom ago 28 00:42:18 CEST 2011
+	En la construcción de la estructura, nos falta poner qué edge del triángulo vecino es el vecino de qué edge
+	así:
+	nei[3][3]
+ elemento   edge del elemento    sentido
+	0            1                 -1
+	1            2                  1
+	2            1                  1
+
+	Así la copia será mas sencilla. Esto será interesante para la construcción del operador en la frontera.

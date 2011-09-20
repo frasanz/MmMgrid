@@ -24,3 +24,5 @@ void scan_elements(Element *, const char *);
 void scan_vertex(Vertex *, const char *);
 int count_number_edges(Element * element, int number_elements);
 void check_structure(Element * element, Edge * edge, int number_elements);
+void check_structure_elements(Element * element, int number_elements);
+
