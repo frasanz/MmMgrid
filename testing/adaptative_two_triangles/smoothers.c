@@ -65,6 +65,7 @@ void smooth_rgb(Element element, int this_level,int color)
 	print_debug(3,"\t[WHERE] In function smooth_rgb\n","");
 	int i,j;
 	for(i=0;i<element.mesh[this_level].number_nodes_base;i++){
+#pragma omp parallel for shared(element) private(j)
 		for(j=0;j<=i;j++){
 			if((i+j)%3==color){
 				if(i>0 && j>0 && j<i && i< element.mesh[this_level].number_nodes_base-1 

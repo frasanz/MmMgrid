@@ -1,0 +1,1 @@
+gcc -g -O3 -lgsl -lgslcblas -lm -fopenmp  ./paralelo.c -o paralelo
