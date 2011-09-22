@@ -1,5 +1,5 @@
 CC=gcc
-CCFLAGS=-Wall -O3 -g -fopenmp
+CCFLAGS=-Wall -O3
 INCLUDES=-lm
 Default = madt
 
